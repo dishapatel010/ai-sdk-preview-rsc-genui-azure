@@ -1,5 +1,5 @@
 import { Message, TextStreamMessage } from "@/components/message";
-import { azure } from "@ai-sdk/azure";
+import { createAzure } from "@ai-sdk/azure";
 import { CoreMessage, generateId } from "ai";
 import {
   createAI,
@@ -12,6 +12,13 @@ import { z } from "zod";
 import { CameraView } from "@/components/camera-view";
 import { HubView } from "@/components/hub-view";
 import { UsageView } from "@/components/usage-view";
+
+// Initialize the Azure provider with global configuration
+const azureProvider = createAzure({
+  resourceName: process.env.AZURE_RESOURCE_NAME!, // Resource name from environment variables
+  apiKey: process.env.AZURE_API_KEY!,            // API key from environment variables
+  apiVersion: process.env.AZURE_API_VERSION || "2024-08-01-preview", // Default API version if not specified
+});
 
 export interface Hub {
   climate: Record<"low" | "high", number>;
@@ -46,11 +53,7 @@ const sendMessage = async (message: string) => {
   const textComponent = <TextStreamMessage content={contentStream.value} />;
 
   const { value: stream } = await streamUI({
-    model: azure("gpt-4o", {
-      resourceName: process.env.AZURE_RESOURCE_NAME, // Using resourceName from .env or passed directly
-      apiKey: process.env.AZURE_API_KEY,            // Using apiKey from .env or passed directly
-      apiVersion: process.env.AZURE_API_VERSION || "2024-08-01-preview", // Custom API version or default
-    }),
+    model: azureProvider("gpt-4o"), // Pass the deployment name directly
     system: `\
       - you are a friendly home automation assistant
       - reply in lower case
