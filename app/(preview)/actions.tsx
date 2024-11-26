@@ -1,5 +1,5 @@
 import { Message, TextStreamMessage } from "@/components/message";
-import { openai } from "@ai-sdk/openai";
+import { azure } from "@ai-sdk/azure";
 import { CoreMessage, generateId } from "ai";
 import {
   createAI,
@@ -46,7 +46,11 @@ const sendMessage = async (message: string) => {
   const textComponent = <TextStreamMessage content={contentStream.value} />;
 
   const { value: stream } = await streamUI({
-    model: openai("gpt-4o"),
+    model: azure("gpt-4o", {
+      resourceName: process.env.AZURE_RESOURCE_NAME, // Using resourceName from .env or passed directly
+      apiKey: process.env.AZURE_API_KEY,            // Using apiKey from .env or passed directly
+      apiVersion: process.env.AZURE_API_VERSION || "2024-10-01-preview", // Custom API version or default
+    }),
     system: `\
       - you are a friendly home automation assistant
       - reply in lower case
