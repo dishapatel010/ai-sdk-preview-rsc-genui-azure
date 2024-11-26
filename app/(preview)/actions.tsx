@@ -49,7 +49,7 @@ const sendMessage = async (message: string) => {
     model: azure("gpt-4o", {
       resourceName: process.env.AZURE_RESOURCE_NAME, // Using resourceName from .env or passed directly
       apiKey: process.env.AZURE_API_KEY,            // Using apiKey from .env or passed directly
-      apiVersion: process.env.AZURE_API_VERSION || "2024-10-01-preview", // Custom API version or default
+      apiVersion: process.env.AZURE_API_VERSION || "2024-08-01-preview", // Custom API version or default
     }),
     system: `\
       - you are a friendly home automation assistant
